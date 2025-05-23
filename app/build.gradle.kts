@@ -60,6 +60,8 @@ dependencies {
     implementation(libs.koin.android)
     implementation(libs.androidx.material.icons.core)
     implementation(libs.androidx.material.icons.extended)
+    implementation(libs.ui.tooling.preview)
+    debugImplementation(libs.ui.tooling)
     //noinspection KaptUsageInsteadOfKsp
     kapt(libs.androidx.room.compiler)
     implementation(libs.androidx.lifecycle.viewmodel.compose)

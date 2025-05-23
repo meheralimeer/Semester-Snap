@@ -1,6 +1,5 @@
 package com.meher.semestersnap.di
 
-import android.content.Context
 import androidx.room.Room
 import com.meher.semestersnap.data.AppDatabase
 import com.meher.semestersnap.ui.viewmodel.GPAViewModel

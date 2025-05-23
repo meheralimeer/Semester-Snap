@@ -49,7 +49,7 @@ class GPAViewModel(
 
     fun addAssignment(courseId: Long) {
         viewModelScope.launch {
-            assignmentDao.insert(Assignment(courseId = courseId, obtainedMarks = 0f, totalMarks = 100f))
+            assignmentDao.insert(Assignment(courseId = courseId, obtainedMarks = 0f, totalMarks = 10f))
         }
     }
 
@@ -67,7 +67,7 @@ class GPAViewModel(
 
     fun addQuiz(courseId: Long) {
         viewModelScope.launch {
-            quizDao.insert(Quiz(courseId = courseId, obtainedMarks = 0f, totalMarks = 50f))
+            quizDao.insert(Quiz(courseId = courseId, obtainedMarks = 0f, totalMarks = 15f))
         }
     }
 
@@ -88,35 +88,73 @@ class GPAViewModel(
         val assignmentsFlow = getAssignmentsForCourse(courseId)
         val quizzesFlow = getQuizzesForCourse(courseId)
 
-        var totalObtained = 0f
-        var totalMarks = 0f
-
+        var assignmentsCount = 0
+        var quizCount = 0
         runBlocking {
-            courseFlow.first()?.let { course ->
-                totalObtained += course.midtermObtained + course.terminalObtained
-                totalMarks += course.midtermTotal + course.terminalTotal
-            }
             assignmentsFlow.first().forEach { assignment ->
-                totalObtained += assignment.obtainedMarks
-                totalMarks += assignment.totalMarks
+                assignmentsCount++
             }
             quizzesFlow.first().forEach { quiz ->
-                totalObtained += quiz.obtainedMarks
-                totalMarks += quiz.totalMarks
+                quizCount++
             }
         }
 
-        if (totalMarks == 0f) return 0f
+        var totalObtained = 0f
+        var totalMarks = 100f
+
+        var assignmentWeightage = 10f
+        var quizWeightage = 15f
+        var midtermWeightage = 25f
+        var terminalWeightage = 50f
+
+        var eachAssignmentWeightage = assignmentWeightage / assignmentsCount
+        var assignmentTotalMarks = 0f
+        var assignmentObtainedMarks = 0f
+
+        var eachQuizWeightage = quizWeightage / quizCount
+        var quizTotalMarks = 0f
+        var quizObtainedMarks = 0f
+
+        runBlocking {
+
+            courseFlow.first()?.let { course ->
+                if (course.midtermObtained > 0 && course.midtermTotal > 0) {
+                    totalObtained += (course.midtermObtained / course.midtermTotal) * midtermWeightage
+                }
+                if (course.terminalObtained > 0 && course.terminalTotal > 0) {
+                    totalObtained += (course.terminalObtained / course.terminalTotal) * terminalWeightage
+                }
+            }
+            assignmentsFlow.first().forEach { assignment ->
+                if (assignment.obtainedMarks > 0 && assignment.totalMarks > 0) {
+                    assignmentObtainedMarks += (assignment.obtainedMarks / assignment.totalMarks) * eachAssignmentWeightage
+                }
+                assignmentTotalMarks += eachAssignmentWeightage
+            }
+            quizzesFlow.first().forEach { quiz ->
+                if (quiz.obtainedMarks > 0 && quiz.totalMarks > 0) {
+                    quizObtainedMarks += (quiz.obtainedMarks / quiz.totalMarks) * eachQuizWeightage
+                }
+                quizTotalMarks+= eachQuizWeightage
+            }
+        }
+
+        totalObtained += (assignmentObtainedMarks / assignmentTotalMarks) * assignmentWeightage
+        totalObtained += (quizObtainedMarks/ quizTotalMarks) * quizWeightage
+
+//        if (totalMarks == 0f) return 0f
         val percentage = (totalObtained / totalMarks) * 100
         return when {
-            percentage >= 85 -> 4.0f
-            percentage >= 80 -> 3.7f
-            percentage >= 75 -> 3.3f
-            percentage >= 70 -> 3.0f
-            percentage >= 65 -> 2.7f
-            percentage >= 60 -> 2.3f
-            percentage >= 55 -> 2.0f
-            percentage >= 50 -> 1.7f
+            percentage >= 85 -> 4.00f
+            percentage >= 80 -> 3.66f
+            percentage >= 75 -> 3.33f
+            percentage >= 71 -> 3.00f
+            percentage >= 68 -> 2.66f
+            percentage >= 64 -> 2.33f
+            percentage >= 61 -> 2.00f
+            percentage >= 58 -> 1.66f
+            percentage >= 54 -> 1.33f
+            percentage >= 50 -> 1.00f
             else -> 0.0f
         }
     }

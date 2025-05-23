@@ -8,6 +8,7 @@ data class Course(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
     val name: String,
+    val credits: Int,
     val midtermObtained: Float,
     val midtermTotal: Float,
     val terminalObtained: Float,
