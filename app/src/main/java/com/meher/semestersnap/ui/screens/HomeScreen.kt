@@ -1,5 +1,6 @@
 package com.meher.semestersnap.ui.screens
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -18,7 +19,9 @@ import androidx.compose.ui.unit.dp
 import com.meher.semestersnap.ui.viewmodel.GPAViewModel
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import kotlinx.coroutines.FlowPreview
 
+@SuppressLint("DefaultLocale")
 @Composable
 fun HomeScreen(
     viewModel: GPAViewModel,

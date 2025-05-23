@@ -10,7 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.meher.semestersnap.ui.theme.GPACalculatorTheme
+import com.meher.semestersnap.ui.theme.SemesterSnapTheme
 import com.meher.semestersnap.ui.screens.CourseDetailScreen
 import com.meher.semestersnap.ui.screens.HomeScreen
 import org.koin.androidx.compose.koinViewModel
@@ -19,7 +19,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            GPACalculatorTheme {
+            SemesterSnapTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
