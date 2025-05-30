@@ -35,15 +35,27 @@ class GPAViewModel(
         return quizDao.getQuizzesForCourse(courseId)
     }
 
-    fun addCourse(course: Course) {
-        viewModelScope.launch {
-            courseDao.insert(course)
-        }
+    suspend fun addCourse(course: Course): Long {
+        return courseDao.insert(course)
     }
 
     fun updateCourse(course: Course) {
         viewModelScope.launch {
             courseDao.update(course)
+        }
+    }
+
+    fun deleteCourseWithComponents(course: Course) {
+        viewModelScope.launch {
+            // Delete associated assignments and quizzes
+            assignmentDao.getAssignmentsForCourse(course.id).first().forEach { assignment ->
+                assignmentDao.delete(assignment)
+            }
+            quizDao.getQuizzesForCourse(course.id).first().forEach { quiz ->
+                quizDao.delete(quiz)
+            }
+            // Delete the course
+            courseDao.delete(course)
         }
     }
 
@@ -100,23 +112,19 @@ class GPAViewModel(
         }
 
         var totalObtained = 0f
-        var totalMarks = 100f
 
-        var assignmentWeightage = 10f
-        var quizWeightage = 15f
-        var midtermWeightage = 25f
-        var terminalWeightage = 50f
+        val assignmentWeightage = 10f
+        val quizWeightage = 15f
+        val midtermWeightage = 25f
+        val terminalWeightage = 50f
 
-        var eachAssignmentWeightage = assignmentWeightage / assignmentsCount
-        var assignmentTotalMarks = 0f
+        val eachAssignmentWeightage = if (assignmentsCount > 0) assignmentWeightage / assignmentsCount else 0f
         var assignmentObtainedMarks = 0f
 
-        var eachQuizWeightage = quizWeightage / quizCount
-        var quizTotalMarks = 0f
+        val eachQuizWeightage = if (quizCount > 0) quizWeightage / quizCount else 0f
         var quizObtainedMarks = 0f
 
         runBlocking {
-
             courseFlow.first()?.let { course ->
                 if (course.midtermObtained > 0 && course.midtermTotal > 0) {
                     totalObtained += (course.midtermObtained / course.midtermTotal) * midtermWeightage
@@ -129,21 +137,18 @@ class GPAViewModel(
                 if (assignment.obtainedMarks > 0 && assignment.totalMarks > 0) {
                     assignmentObtainedMarks += (assignment.obtainedMarks / assignment.totalMarks) * eachAssignmentWeightage
                 }
-                assignmentTotalMarks += eachAssignmentWeightage
             }
             quizzesFlow.first().forEach { quiz ->
                 if (quiz.obtainedMarks > 0 && quiz.totalMarks > 0) {
                     quizObtainedMarks += (quiz.obtainedMarks / quiz.totalMarks) * eachQuizWeightage
                 }
-                quizTotalMarks+= eachQuizWeightage
             }
         }
 
-        totalObtained += (assignmentObtainedMarks / assignmentTotalMarks) * assignmentWeightage
-        totalObtained += (quizObtainedMarks/ quizTotalMarks) * quizWeightage
+        totalObtained += assignmentObtainedMarks
+        totalObtained += quizObtainedMarks
 
-//        if (totalMarks == 0f) return 0f
-        val percentage = (totalObtained / totalMarks) * 100
+        val percentage = totalObtained
         return when {
             percentage >= 85 -> 4.00f
             percentage >= 80 -> 3.66f
@@ -162,9 +167,11 @@ class GPAViewModel(
     fun calculateCGPA(courses: List<Course>): Float {
         if (courses.isEmpty()) return 0f
         var totalGPA = 0f
+        var totalCredits = 0
         courses.forEach { course ->
-            totalGPA += calculateGPA(course.id)
+            totalGPA += (calculateGPA(course.id) * course.credits)
+            totalCredits += course.credits
         }
-        return min(totalGPA / courses.size, 4.0f)
+        return min(totalGPA / totalCredits, 4.0f)
     }
 }

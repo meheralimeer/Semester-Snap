@@ -1,232 +1,20 @@
 package com.meher.semestersnap.ui.screens
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.meher.semestersnap.data.entity.Course
 import com.meher.semestersnap.ui.viewmodel.GPAViewModel
-
-//@Composable
-//fun CourseDetailScreen(
-//    viewModel: GPAViewModel,
-//    courseId: Long,
-//    onBack: () -> Unit
-//) {
-//    val course by viewModel.getCourse(courseId).collectAsState(initial = null)
-//    val assignments by viewModel.getAssignmentsForCourse(courseId).collectAsState(initial = emptyList())
-//    val quizzes by viewModel.getQuizzesForCourse(courseId).collectAsState(initial = emptyList())
-//
-//    var courseName by remember { mutableStateOf("") }
-//    var credits by remember { mutableStateOf("") }
-//    var midtermObtained by remember { mutableStateOf("") }
-//    var midtermTotal by remember { mutableStateOf("") }
-//    var terminalObtained by remember { mutableStateOf("") }
-//    var terminalTotal by remember { mutableStateOf("") }
-//
-//    LaunchedEffect(course) {
-//        course?.let {
-//            courseName = it.name
-//            credits = it.credits.toString()
-//            midtermObtained = it.midtermObtained.toString()
-//            midtermTotal = it.midtermTotal.toString()
-//            terminalObtained = it.terminalObtained.toString()
-//            terminalTotal = it.terminalTotal.toString()
-//        }
-//    }
-//
-//    Column(
-//        modifier = Modifier
-//            .fillMaxSize()
-//            .padding(16.dp)
-//    ) {
-//        OutlinedTextField(
-//            value = courseName,
-//            onValueChange = { courseName = it },
-//            label = { Text("Course Name") },
-//            modifier = Modifier.fillMaxWidth()
-//        )
-//        Spacer(modifier = Modifier.height(16.dp))
-//
-//        OutlinedTextField(
-//            value = credits,
-//            onValueChange = {credits = it},
-//            label = { Text("Credit Hours")},
-//            modifier = Modifier.fillMaxWidth()
-//        )
-//        Spacer(modifier = Modifier.height(16.dp))
-//
-//        Text("Midterm Exam", style = MaterialTheme.typography.titleMedium)
-//        Row {
-//            OutlinedTextField(
-//                value = midtermObtained,
-//                onValueChange = { midtermObtained = it },
-//                label = { Text("Obtained") },
-//                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-//                modifier = Modifier.weight(1f)
-//            )
-//            Spacer(modifier = Modifier.width(8.dp))
-//            OutlinedTextField(
-//                value = midtermTotal,
-//                onValueChange = { midtermTotal = it },
-//                label = { Text("Total") },
-//                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-//                modifier = Modifier.weight(1f)
-//            )
-//        }
-//
-//        Spacer(modifier = Modifier.height(16.dp))
-//        Text("Terminal Exam", style = MaterialTheme.typography.titleMedium)
-//        Row {
-//            OutlinedTextField(
-//                value = terminalObtained,
-//                onValueChange = { terminalObtained = it },
-//                label = { Text("Obtained") },
-//                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-//                modifier = Modifier.weight(1f)
-//            )
-//            Spacer(modifier = Modifier.width(8.dp))
-//            OutlinedTextField(
-//                value = terminalTotal,
-//                onValueChange = { terminalTotal = it },
-//                label = { Text("Total") },
-//                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-//                modifier = Modifier.weight(1f)
-//            )
-//        }
-//
-//        Spacer(modifier = Modifier.height(16.dp))
-//        Text("Assignments", style = MaterialTheme.typography.titleMedium)
-//        assignments.forEachIndexed { index, assignment ->
-//            Row {
-//                OutlinedTextField(
-//                    value = assignment.obtainedMarks.toString(),
-//                    onValueChange = {
-//                        viewModel.updateAssignment(
-//                            assignment.copy(obtainedMarks = it.toFloatOrNull() ?: 0f)
-//                        )
-//                    },
-//                    label = { Text("Assignment ${index + 1} Obtained") },
-//                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-//                    modifier = Modifier.weight(1f)
-//                )
-//                Spacer(modifier = Modifier.width(12.dp))
-//                OutlinedTextField(
-//                    value = assignment.totalMarks.toString(),
-//                    onValueChange = {
-//                        viewModel.updateAssignment(
-//                            assignment.copy(totalMarks = it.toFloatOrNull() ?: 0f)
-//                        )
-//                    },
-//                    label = { Text("Total") },
-//                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-//                    modifier = Modifier.weight(1f)
-//                )
-//                IconButton(onClick = { viewModel.deleteAssignment(assignment) }) {
-//                    Icon(Icons.Default.Delete, contentDescription = "Delete Assignment")
-//                }
-//            }
-//        }
-//        Button(onClick = { viewModel.addAssignment(courseId) }) {
-//            Text("Add Assignment")
-//        }
-//
-//        Spacer(modifier = Modifier.height(16.dp))
-//        Text("Quizzes", style = MaterialTheme.typography.titleMedium)
-//        quizzes.forEachIndexed { index, quiz ->
-//            Row {
-//                OutlinedTextField(
-//                    value = quiz.obtainedMarks.toString(),
-//                    onValueChange = {
-//                        viewModel.updateQuiz(
-//                            quiz.copy(obtainedMarks = it.toFloatOrNull() ?: 0f)
-//                        )
-//                    },
-//                    label = { Text("Quiz ${index + 1} Obtained") },
-//                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-//                    modifier = Modifier.weight(1f)
-//                )
-//                Spacer(modifier = Modifier.width(12.dp))
-//                OutlinedTextField(
-//                    value = quiz.totalMarks.toString(),
-//                    onValueChange = {
-//                        viewModel.updateQuiz(
-//                            quiz.copy(totalMarks = it.toFloatOrNull() ?: 0f)
-//                        )
-//                    },
-//                    label = { Text("Total") },
-//                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-//                    modifier = Modifier.weight(1f)
-//                )
-//                IconButton(onClick = { viewModel.deleteQuiz(quiz) }) {
-//                    Icon(Icons.Default.Delete, contentDescription = "Delete Quiz")
-//                }
-//            }
-//        }
-//        Button(onClick = { viewModel.addQuiz(courseId) }) {
-//            Text("Add Quiz")
-//        }
-//
-//        Spacer(modifier = Modifier.height(16.dp))
-//        Row {
-//            Button(
-//                onClick = {
-//                    val updatedCourse = Course(
-//                        id = courseId,
-//                        name = courseName,
-//                        credits = credits.toIntOrNull() ?: 0,
-//                        midtermObtained = midtermObtained.toFloatOrNull() ?: 0f,
-//                        midtermTotal = midtermTotal.toFloatOrNull() ?: 0f,
-//                        terminalObtained = terminalObtained.toFloatOrNull() ?: 0f,
-//                        terminalTotal = terminalTotal.toFloatOrNull() ?: 0f
-//                    )
-//                    if (courseId == 0L) {
-//                        viewModel.addCourse(updatedCourse)
-//                    } else {
-//                        viewModel.updateCourse(updatedCourse)
-//                    }
-//                    onBack()
-//                },
-//                modifier = Modifier.weight(1f)
-//            ) {
-//                Text("Save")
-//            }
-//            Spacer(modifier = Modifier.width(8.dp))
-//            Button(
-//                onClick = onBack,
-//                modifier = Modifier.weight(1f)
-//            ) {
-//                Text("Cancel")
-//            }
-//        }
-//    }
-//}
+import kotlinx.coroutines.launch
 
 @Composable
 fun CourseDetailScreen(
@@ -234,9 +22,11 @@ fun CourseDetailScreen(
     courseId: Long,
     onBack: () -> Unit
 ) {
-    val course by viewModel.getCourse(courseId).collectAsState(initial = null)
-    val assignments by viewModel.getAssignmentsForCourse(courseId).collectAsState(initial = emptyList())
-    val quizzes by viewModel.getQuizzesForCourse(courseId).collectAsState(initial = emptyList())
+    val coroutineScope = rememberCoroutineScope()
+    var courseID by remember { mutableLongStateOf(courseId) }
+    val course by viewModel.getCourse(courseID).collectAsState(initial = null)
+    val assignments by viewModel.getAssignmentsForCourse(courseID).collectAsState(initial = emptyList())
+    val quizzes by viewModel.getQuizzesForCourse(courseID).collectAsState(initial = emptyList())
 
     var courseName by remember { mutableStateOf("") }
     var credits by remember { mutableStateOf("") }
@@ -246,8 +36,26 @@ fun CourseDetailScreen(
     var terminalTotal by remember { mutableStateOf("") }
     val scrollState = rememberScrollState()
 
+    // Insert a new course immediately if courseId is 0L
+    LaunchedEffect(courseId) {
+        if (courseId == 0L) {
+            val newCourse = Course(
+                id = 0L,
+                name = "",
+                credits = 0,
+                midtermObtained = 0f,
+                midtermTotal = 0f,
+                terminalObtained = 0f,
+                terminalTotal = 0f
+            )
+            courseID = viewModel.addCourse(newCourse)
+        }
+    }
+
+    // Update UI fields when course data is loaded
     LaunchedEffect(course) {
         course?.let {
+            courseID = it.id
             courseName = it.name
             credits = it.credits.toString()
             midtermObtained = it.midtermObtained.toString()
@@ -261,7 +69,7 @@ fun CourseDetailScreen(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(scrollState)
-            .padding(16.dp)
+            .padding(8.dp)
     ) {
         Column(
             modifier = Modifier
@@ -330,35 +138,39 @@ fun CourseDetailScreen(
 
             StyledCard("Assignments") {
                 assignments.forEachIndexed { index, assignment ->
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        StyledTextField(
-                            "Assignment ${index + 1} Obtained",
-                            assignment.obtainedMarks.toString(),
-                            KeyboardType.Number,
-                            Modifier.weight(1f)
-                        ) {
-                            viewModel.updateAssignment(
-                                assignment.copy(obtainedMarks = it.toFloatOrNull() ?: 0f)
-                            )
+                    Column {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            StyledTextField(
+                                "Assignment ${index + 1} Obtained",
+                                assignment.obtainedMarks.toString(),
+                                KeyboardType.Number,
+                                Modifier.weight(1f)
+                            ) {
+                                viewModel.updateAssignment(
+                                    assignment.copy(obtainedMarks = it.toFloatOrNull() ?: 0f)
+                                )
+                            }
+                            Spacer(modifier = Modifier.width(8.dp))
+                            StyledTextField(
+                                "Total",
+                                assignment.totalMarks.toString(),
+                                KeyboardType.Number,
+                                Modifier.weight(1f)
+                            ) {
+                                viewModel.updateAssignment(
+                                    assignment.copy(totalMarks = it.toFloatOrNull() ?: 0f)
+                                )
+                            }
+                            IconButton(onClick = { viewModel.deleteAssignment(assignment) }) {
+                                Icon(Icons.Default.Delete, contentDescription = "Delete")
+                            }
                         }
-                        Spacer(modifier = Modifier.width(8.dp))
-                        StyledTextField(
-                            "Total",
-                            assignment.totalMarks.toString(),
-                            KeyboardType.Number,
-                            Modifier.weight(1f)
-                        ) {
-                            viewModel.updateAssignment(
-                                assignment.copy(totalMarks = it.toFloatOrNull() ?: 0f)
-                            )
-                        }
-                        IconButton(onClick = { viewModel.deleteAssignment(assignment) }) {
-                            Icon(Icons.Default.Delete, contentDescription = "Delete")
-                        }
+                        Spacer(modifier = Modifier.height(16.dp))
                     }
                 }
+
                 Spacer(modifier = Modifier.height(8.dp))
-                Button(onClick = { viewModel.addAssignment(courseId) }) {
+                Button(onClick = { viewModel.addAssignment(courseID) }) {
                     Text("Add Assignment")
                 }
             }
@@ -367,35 +179,39 @@ fun CourseDetailScreen(
 
             StyledCard("Quizzes") {
                 quizzes.forEachIndexed { index, quiz ->
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        StyledTextField(
-                            "Quiz ${index + 1} Obtained",
-                            quiz.obtainedMarks.toString(),
-                            KeyboardType.Number,
-                            Modifier.weight(1f)
-                        ) {
-                            viewModel.updateQuiz(
-                                quiz.copy(
-                                    obtainedMarks = it.toFloatOrNull() ?: 0f
+                    Column {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            StyledTextField(
+                                "Quiz ${index + 1} Obtained",
+                                quiz.obtainedMarks.toString(),
+                                KeyboardType.Number,
+                                Modifier.weight(1f)
+                            ) {
+                                viewModel.updateQuiz(
+                                    quiz.copy(obtainedMarks = it.toFloatOrNull() ?: 0f)
                                 )
-                            )
+                            }
+                            Spacer(modifier = Modifier.width(8.dp))
+                            StyledTextField(
+                                "Total",
+                                quiz.totalMarks.toString(),
+                                KeyboardType.Number,
+                                Modifier.weight(1f)
+                            ) {
+                                viewModel.updateQuiz(
+                                    quiz.copy(totalMarks = it.toFloatOrNull() ?: 0f)
+                                )
+                            }
+                            IconButton(onClick = { viewModel.deleteQuiz(quiz) }) {
+                                Icon(Icons.Default.Delete, contentDescription = "Delete")
+                            }
                         }
-                        Spacer(modifier = Modifier.width(8.dp))
-                        StyledTextField(
-                            "Total",
-                            quiz.totalMarks.toString(),
-                            KeyboardType.Number,
-                            Modifier.weight(1f)
-                        ) {
-                            viewModel.updateQuiz(quiz.copy(totalMarks = it.toFloatOrNull() ?: 0f))
-                        }
-                        IconButton(onClick = { viewModel.deleteQuiz(quiz) }) {
-                            Icon(Icons.Default.Delete, contentDescription = "Delete")
-                        }
+
+                        Spacer(modifier = Modifier.height(16.dp))
                     }
                 }
                 Spacer(modifier = Modifier.height(8.dp))
-                Button(onClick = { viewModel.addQuiz(courseId) }) {
+                Button(onClick = { viewModel.addQuiz(courseID) }) {
                     Text("Add Quiz")
                 }
             }
@@ -406,7 +222,7 @@ fun CourseDetailScreen(
                 Button(
                     onClick = {
                         val updatedCourse = Course(
-                            id = courseId,
+                            id = courseID,
                             name = courseName,
                             credits = credits.toIntOrNull() ?: 0,
                             midtermObtained = midtermObtained.toFloatOrNull() ?: 0f,
@@ -414,10 +230,10 @@ fun CourseDetailScreen(
                             terminalObtained = terminalObtained.toFloatOrNull() ?: 0f,
                             terminalTotal = terminalTotal.toFloatOrNull() ?: 0f
                         )
-                        if (courseId == 0L) viewModel.addCourse(updatedCourse)
-                        else viewModel.updateCourse(updatedCourse)
-
-                        onBack()
+                        coroutineScope.launch {
+                            viewModel.updateCourse(updatedCourse)
+                            onBack()
+                        }
                     },
                     modifier = Modifier.weight(1f)
                 ) {
@@ -427,7 +243,17 @@ fun CourseDetailScreen(
                 Spacer(modifier = Modifier.width(8.dp))
 
                 Button(
-                    onClick = onBack,
+                    onClick = {
+                        if (courseId == 0L) {
+                            // Delete the temporary course if canceling a new course
+                            coroutineScope.launch {
+                                course?.let { viewModel.deleteCourseWithComponents(it) }
+                                onBack()
+                            }
+                        } else {
+                            onBack()
+                        }
+                    },
                     modifier = Modifier.weight(1f)
                 ) {
                     Text("Cancel")
@@ -439,12 +265,12 @@ fun CourseDetailScreen(
 
 @Composable
 fun StyledCard(title: String? = null, content: @Composable () -> Unit) {
-    androidx.compose.material3.Card(
+    Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 4.dp),
         shape = MaterialTheme.shapes.large,
-        elevation = androidx.compose.material3.CardDefaults.cardElevation(4.dp)
+        elevation = CardDefaults.cardElevation(4.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             title?.let {
@@ -469,7 +295,6 @@ fun StyledTextField(
         onValueChange = onValueChange,
         label = { Text(label) },
         keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
-        modifier = modifier
-            .fillMaxWidth()
+        modifier = modifier.fillMaxWidth()
     )
 }
