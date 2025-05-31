@@ -30,7 +30,7 @@
 - Git installed for cloning the repository.
 
 ### Download APK
-1. Visit the [Releases](https://github.com/meheralimeer/semestersnap/releases) page.
+1. Visit the [Releases](https://github.com/meheralimeer/semester-snap/releases) page.
 2. Download the latest release APK.
 3. Enable **Install from Unknown Sources** on your Android device.
 4. Install the APK and launch **Semester Snap**.
