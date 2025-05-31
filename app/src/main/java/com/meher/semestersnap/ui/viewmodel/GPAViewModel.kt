@@ -172,6 +172,7 @@ class GPAViewModel(
             totalGPA += (calculateGPA(course.id) * course.credits)
             totalCredits += course.credits
         }
+        if (totalCredits == 0) return 0f
         return min(totalGPA / totalCredits, 4.0f)
     }
 }
